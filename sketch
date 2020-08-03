@@ -1,0 +1,49 @@
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(5,6,8,9,10,11);
+
+int state =0;
+int sensorThresh = 400;
+
+void setup()
+{
+pinMode(2, OUTPUT);
+pinMode(3,OUTPUT);
+pinMode(4,INPUT);
+pinMode(A0,INPUT);
+Serial.begin(9600);
+lcd.begin(16,2);
+}
+
+void loop()
+{
+  int analogValue = analogRead(A0);
+  Serial.print(analogValue);
+  state = digitalRead(2);
+  if(analogValue>sensorThresh)
+  {
+    digitalWrite(2,HIGH);
+    tone(3,1000,10000);
+    lcd.clear();
+    lcd.setCursor(0,1);
+    lcd.print("DANGER ALERT");
+    delay(500);
+    lcd.clear();
+    lcd.setCursor(0,1);
+    lcd.print("EXIT NOW");
+    delay(500);
+  }
+  if(analogValue<sensorThresh || state == HIGH)
+  {
+    digitalWrite(2,LOW);
+    noTone(3);
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("YOU ARE SAFE");
+    delay(1500);
+    lcd.clear();
+    lcd.setCursor(0,1);
+    lcd.print("NO WORRIES");
+    delay(1500);
+  }  
+     
+}
